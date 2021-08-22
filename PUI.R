@@ -1,19 +1,13 @@
 #raw data addresses
-
 #ICD <- read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/DIAGNOSES_ICD.csv")
 #PUICHARTEVENTS came from CHARTEVENTS based on the selected PI item ids
 #PUICHARTEVENTS<- read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/PU_chart_vivian_ids.csv")
 #NOTEEVENTS <- read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/NOTEEVENTS.csv")
-#CPTEVENTS<-read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/CPTEVENTS.csv")
-
 
 #load libraries
 library(dplyr)
-library(reshape2)
-library(stringr)
-library (VennDiagram)
 library(tidyverse)
-library(data.table)
+library(stringr)
 
 #ICDs
 #load data
@@ -74,6 +68,7 @@ PUICHARTEVENTS<-PUICHARTEVENTS[is.na(PUICHARTEVENTS$value)==FALSE,]
                                   #PUICHARTEVENTS$value!="Yes"|
                                   #PUICHARTEVENTS$value!="0"),]
 PUICHARTEVENTS<-PUICHARTEVENTS[PUICHARTEVENTS$itemid>86&PUICHARTEVENTS$itemid!=88,]
+
 PUICHARTEVENTS%>%
   group_by(subject_id,hadm_id,itemid)%>%
   summarise(firstcharttime=first(charttime),lastcharttime=last(charttime))->PUICHART

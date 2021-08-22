@@ -1,18 +1,12 @@
 #raw data addresses
 #ICD <- read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/DIAGNOSES_ICD.csv")
 #PUICHARTEVENTS<- read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/PU_chart_vivian_ids.csv")
-#PUICHARTEVENTS came from CHARTEVENTS based on the selected PI item ids
 #NOTEEVENTS <- read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/NOTEEVENTS.csv")
-#CPTEVENTS<-read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/CPTEVENTS.csv")
 
 #load libraries
 library(dplyr)
-library(reshape2)
-library(stringr)
-library (VennDiagram)
 library(tidyverse)
-library(data.table)
-library(car)
+library(stringr)
 
 #load cleaned data
 load("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/PUI.RData")
@@ -117,16 +111,6 @@ PUIF$DISCHARGE_LOCATIONR[PUIF$DISCHARGE_LOCATION=="HOME"|
                            PUIF$DISCHARGE_LOCATION=="HOME HEALTH CARE"|
                            PUIF$DISCHARGE_LOCATION=="HOME WITH HOME IV PROVIDR"|
                            PUIF$DISCHARGE_LOCATION=="LEFT AGAINST MEDICAL ADVI"]<-"HOME/LEFT AGST ADV"
-PUIF$RELIGIONR[PUIF$RELIGION=="7TH DAY ADVENTIST"|
-                 PUIF$RELIGION=="BAPTIST"|
-                 PUIF$RELIGION=="CATHOLIC"|
-                 PUIF$RELIGION=="CHRISTIAN SCIENTIST"|
-                 PUIF$RELIGION=="EPISCOPALIAN"|
-                 PUIF$RELIGION=="GREEK ORTHODOX"|
-                 PUIF$RELIGION=="JEHOVAH'S WITNESS"|
-                 PUIF$RELIGION=="LUTHERAN"|
-                 PUIF$RELIGION=="METHODIST"|
-                 PUIF$RELIGION=="PROTESTANT QUAKER"]<-"CHRISTIAN"
 PUIF$RELIGIONR[PUIF$RELIGION=="HEBREW"|
                  PUIF$RELIGION=="JEWISH"|
                  PUIF$RELIGION=="BUDDHIST"|
