@@ -1,7 +1,7 @@
 #raw data addresses
-#ICD <- read.csv("C:/Users/wzhan61/Box/Postdoc/Data center/Vicki's projects/NeLL_NSF/MIMIC III/data analysis/PUI/DIAGNOSES_ICD.csv")
-#PUICHARTEVENTS<- read.csv("C:/Users/wzhan61/Box/Postdoc/Data center/Vicki's projects/NeLL_NSF/MIMIC III/data analysis/PUI/PU_chart_vivian_ids.csv")
-#NOTEEVENTS <- read.csv("C:/Users/wzhan61/Box/Postdoc/Data center/Vicki's projects/NeLL_NSF/MIMIC III/MIMIC III data_nochartevents/NOTEEVENTS.csv")
+#ICD <- read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/DIAGNOSES_ICD.csv")
+#PUICHARTEVENTS<- read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/PU_chart_vivian_ids.csv")
+#NOTEEVENTS <- read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/NOTEEVENTS.csv")
 
 #load libraries
 library(dplyr)
@@ -10,9 +10,8 @@ library(stringr)
 
 #To check ICD and chart consistencies
 #create more detailed PUICHART stage and site  and merge with PUIF
-load("C:/Users/wzhan61/Box/Postdoc/Data center/Vicki's projects/NeLL_NSF/MIMIC III/data analysis/PUI/PUIF.RData")
-#PUI check vague itemid values, rerun venn diagrams
-PUICHARTEVENTS<- read.csv("C:/Users/wzhan61/Box/Postdoc/Data center/Vicki's projects/NeLL_NSF/MIMIC III/data analysis/PUI/PU_chart_vivian_ids.csv")
+load("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/PUIF.RData")
+PUICHARTEVENTS<- read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/PU_chart_vivian_ids.csv")
 PUICHARTEVENTS<- PUICHARTEVENTS[order(PUICHARTEVENTS$subject_id,
                                       PUICHARTEVENTS$hadm_id, 
                                       PUICHARTEVENTS$charttime,
@@ -132,7 +131,7 @@ rm(PUICHARTEVENTS,PUICHART,
 PUIFA<-merge(x=PUIF,y=PUICHARTR2, by.x =c("SUBJECT_ID", "HADM_ID"),
              by.y = c("SUBJECT_ID", "HADM_ID"),all.x=TRUE)
 #merge with more detailed ICDR
-ICD <- read.csv("C:/Users/wzhan61/Box/Postdoc/Data center/Vicki's projects/NeLL_NSF/MIMIC III/data analysis/PUI/DIAGNOSES_ICD.csv")
+ICD <- read.csv("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/DIAGNOSES_ICD.csv")
 ICD<-ICD[!is.na(ICD$SEQ_NUM),]
 ICD<-ICD[order(ICD$SUBJECT_ID,ICD$HADM_ID,ICD$SEQ_NUM,ICD$ICD9_CODE),]
 PUIICDsite<- filter(ICD,ICD$ICD9_CODE=='70700'|ICD$ICD9_CODE=='70701'|
@@ -167,51 +166,11 @@ PUIFA2<-merge(x=PUIFA,y=PUIICDR2, by.x =c("SUBJECT_ID", "HADM_ID"),
               by.y = c("SUBJECT_ID", "HADM_ID"),all.x=TRUE)
 rm(ICD,PUIICDsite,PUIICDstage, PUIFA)
 saveRDS(PUIFA2, file = "PUIFA2.Rds")
-save.image("C:/Users/wzhan61/Box/Postdoc/Data center/Vicki's projects/NeLL_NSF/MIMIC III/data analysis/PUI/PUIFA2.RData")
+save.image("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/PUIFA2.RData")
 #compare N=1 PUI site/stage across ICD and chart
 PUIFAsite<-PUIFA2[(PUIFA2$nicdsite==1&PUIFA2$chartsitecount==1),]
 PUIFAstage<-PUIFA2[(PUIFA2$nicdstage==1&PUIFA2$chartstagecount==1),]
-table(PUIFAsite$firstpuiicdsite,PUIFAsite$lastpuiicdsite,exclude=NULL)
-table(PUIFAstage$firstpuiicdstage,PUIFAstage$lastpuiicdstage,exclude=NULL)
-table1<-table(PUIFAsite$firstpuiicdsite,PUIFAsite$firstchartsitefirstvalue)
-view(table1)
-table2<-table(PUIFAsite$firstpuiicdsite,PUIFAsite$firstchartsitemodevalue)
-view(table2)
-table3<-table(PUIFAsite$firstpuiicdsite,PUIFAsite$firstchartsitelastvalue)
-view(table3)
 
-table4<-table(PUIFAstage$firstpuiicdstage,PUIFAstage$firstchartstagefirstvalue)
-view(table4)
-table5<-table(PUIFAstage$firstpuiicdstage,PUIFAstage$firstchartstagemodevalue)
-view(table5)
-table6<-table(PUIFAstage$firstpuiicdstage,PUIFAstage$firstchartstagelastvalue)
-view(table6)
-
-table(PUIFAsite$firstchartsitefirstvalue,
-      PUIFAsite$firstchartsitemodevalue,
-      PUIFAsite$firstchartsitelastvalue)
-PUIFAsite$firstchartsiteE<-ifelse(PUIFAsite$firstchartsitefirstvalue==
-                                    PUIFAsite$firstchartsitemodevalue&
-                                    PUIFAsite$firstchartsitefirstvalue==
-                                    PUIFAsite$firstchartsitelastvalue&
-                                    PUIFAsite$firstchartsitemodevalue==
-                                    PUIFAsite$firstchartsitelastvalue,1,0)
-table(PUIFAsite$firstchartsiteE)
-PUIFAstage$firstchartstageE<-ifelse(PUIFAstage$firstchartstagefirstvalue==
-                                      PUIFAstage$firstchartstagemodevalue&
-                                      PUIFAstage$firstchartstagefirstvalue==
-                                      PUIFAstage$firstchartstagelastvalue&
-                                      PUIFAstage$firstchartstagemodevalue==
-                                      PUIFAstage$firstchartstagelastvalue,1,0)
-table(PUIFAstage$firstchartstageE)
-table7<-table(PUIFAsite$firstchartsitemodevalue)
-view(table7)
-table8<-table(PUIFAstage$firstchartstagemodevalue)
-view(table8)
-table9<-table(PUIFAstage$firstchartstagelastvalue)
-view(table9)
-
-table(PUIFAsite$firstpuiicdsite,PUIFAsite$firstchartsitemodevalue=="Shoulder, Right")
 PUIFAsite$firstpuiicdchartsiteC<-ifelse(PUIFAsite$firstpuiicdsite==70701&
                                           PUIFAsite$firstchartsitemodevalue=="Elbow, Left"|
                                           PUIFAsite$firstpuiicdsite==70702&
@@ -236,11 +195,9 @@ PUIFAsite$firstpuiicdchartsiteC<-ifelse(PUIFAsite$firstpuiicdsite==70701&
                                           (PUIFAsite$firstchartsitemodevalue=="Facial"|
                                              PUIFAsite$firstchartsitemodevalue=="Head"|
                                              PUIFAsite$firstchartsitemodevalue=="Shoulder, Right"),1,0)
-table(PUIFAsite$firstpuiicdchartsiteC)
-table10<-table(PUIFAsite$firstpuiicdchartsiteC,PUIFAsite$firstpuiicdsite,PUIFAsite$firstchartsitemodevalue)
-view(table10)
-write.csv(table10, file = "sitecompare.csv")
-table(PUIFAstage$firstpuiicdstage,PUIFAstage$firstchartstagemodevalue=="Red; unbroken")
+table1<-table(PUIFAsite$firstpuiicdchartsiteC,PUIFAsite$firstpuiicdsite,PUIFAsite$firstchartsitemodevalue)
+view(table1)
+write.csv(table1, file = "sitecompare1.csv")
 PUIFAstage$firstpuiicdchartstageC<-ifelse(PUIFAstage$firstpuiicdstage==70720&
                                             (PUIFAstage$firstchartstagemodevalue=="Deep tissue injury"|
                                                PUIFAstage$firstchartstagemodevalue=="Not applicable")|
@@ -258,10 +215,8 @@ PUIFAstage$firstpuiicdchartstageC<-ifelse(PUIFAstage$firstpuiicdstage==70720&
                                             (PUIFAstage$firstchartstagemodevalue=="Unable to assess; dressing not removed"|
                                                PUIFAstage$firstchartstagemodevalue=="Unable to stage; wound is covered with eschar"),
                                           1,0)
-table(PUIFAstage$firstpuiicdchartstageC)
-table11<-table(PUIFAstage$firstpuiicdchartstageC,PUIFAstage$firstpuiicdstage,PUIFAstage$firstchartstagemodevalue)
-view(table11)
-write.csv(table11, file = "stagecompare.csv")
+table2<-table(PUIFAstage$firstpuiicdchartstageC,PUIFAstage$firstpuiicdstage,PUIFAstage$firstchartstagemodevalue)
+write.csv(table2, file = "stagecompare1.csv")
 saveRDS(PUIFAsite, file = "PUIFAsite.Rds")
 saveRDS(PUIFAstage, file = "PUIFAstage.Rds")
-save.image("C:/Users/wzhan61/Box/Postdoc/Data center/Vicki's projects/NeLL_NSF/MIMIC III/data analysis/PUI/PUIFAsitestage.RData")
+save.image("C:/Users/wzhan61/OneDrive - Emory University/Documents/Postdoc/Research/Collabrations/Data center/Vicki's projects/NSF/MIMIC III/data analysis/PUI/PUIFAsitestage.RData")
